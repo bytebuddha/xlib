@@ -15,7 +15,7 @@ pub use x11::xlib::{ XMapEvent, XDestroyWindowEvent, XConfigureEvent,
     ButtonPressMask, FocusChangeMask, Mod1Mask, Mod2Mask, Mod3Mask, Mod4Mask,
     EnterWindowMask, LeaveWindowMask, ControlMask, KeyPressMask, KeyReleaseMask,
     ButtonReleaseMask, PropertyChangeMask, SubstructureRedirectMask, SubstructureNotifyMask,
-    PointerMotionMask, XWindowChanges
+    PointerMotionMask, XWindowChanges, XWMHints
 };
 
 pub use x11::xlib::XEvent as RawXEvent;
