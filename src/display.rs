@@ -11,7 +11,7 @@ use Event;
 pub struct Display(pub *mut xlib::Display);
 
 impl Display {
-    fn default() -> Result<Display, XError> {
+    pub fn default() -> Result<Display, XError> {
         let display = unsafe { xlib::XOpenDisplay(null()) };
         if display.is_null() {
             Err(XError::OpenDisplayError)
