@@ -5,7 +5,7 @@ use std::str;
 use libc::{ c_uint, c_int, c_uchar, c_char, c_ulong };
 use std::ffi::{ CStr };
 use std::mem::{ transmute, uninitialized };
-use { window, XWindowChanges };
+use { XWMHints, window, XWindowChanges };
 use std::slice::from_raw_parts;
 
 #[derive(Debug)]
@@ -58,6 +58,12 @@ impl Window {
         }
     }
 
+    pub fn configure(&self, display: &Display, mask: u32, changes: &mut XWindowChanges) {
+        unsafe {
+            xlib::XConfigureWindow(display.0, self.0, mask, changes);
+        }
+    }
+
     pub fn get_wm_class(&self, display: &Display) -> Result<String, XError> {
         unsafe {
             let mut class_hint: xlib::XClassHint = uninitialized();
@@ -67,6 +73,12 @@ impl Window {
             } else {
                 Ok(CStr::from_ptr(class_hint.res_class).to_string_lossy().into_owned())
             }
+        }
+    }
+
+    pub fn hints(&self, display: &Display) -> *mut XWMHints {
+        unsafe {
+            xlib::XGetWMHints(display.0, self.0)
         }
     }
 
@@ -142,13 +154,7 @@ impl Window {
                         }
     }
 
-    pub fn configure(&self, display: &Display, changes: &mut XWindowChanges, mask: u64) {
-        unsafe { xlib::XConfigureWindow(display.0,
-                       self.0,
-                       mask as u32,
-                       changes) };
-    }
-    
+
     pub fn kill(self, display: &Display) {
             unsafe {
                 xlib::XKillClient(display.0, self.0 as c_ulong);
