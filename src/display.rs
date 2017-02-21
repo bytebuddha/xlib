@@ -85,6 +85,13 @@ impl Display {
         }
     }
 
+    pub fn get_atom_name(&self, atom: u64) -> String {
+        unsafe {
+            CStr::from_ptr(xlib::XGetAtomName(self.0, atom))
+            .to_string_lossy()
+        }.into_owned()
+    }
+
     pub fn flush(&self) {
         unsafe {
             xlib::XFlush(self.0);
@@ -120,7 +127,6 @@ mod tests {
         let d = Display::default().unwrap();
         println!("ScreenCount: {}",d.screen_count());
     }
-    #[ignore]
     #[test]
     fn window_props() {
         let d = Display::default().unwrap();

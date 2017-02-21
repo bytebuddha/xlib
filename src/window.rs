@@ -101,7 +101,7 @@ impl Window {
         }
     }
 
-    pub fn get_property(&self, display: &Display, atom: u64) -> Option<Vec<u64>> {
+    pub fn get_property(&self, display: &Display, atom: u64) -> Option<Vec<u8>> {
         unsafe {
             let mut actual_type_return: c_ulong = 0;
             let mut actual_format_return: c_int = 0;
@@ -130,7 +130,7 @@ impl Window {
                     } else {
                         Some(from_raw_parts(prop_return as *const c_ulong, nitems_return as usize)
                         .iter()
-                        .map(|&c| c as u64)
+                        .map(|&c| c as u8)
                         .collect())
                     }
                 }
@@ -161,4 +161,19 @@ impl Window {
 
             }
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use Display;
+    #[test]
+    fn query_tree() {
+        let mut d = Display::default().unwrap();
+        let scr = d.default_screen();
+        let rt = d.root_window(scr);
+        assert!(rt.query_tree(&d).len() > 1);
+    }
+
+
 }
