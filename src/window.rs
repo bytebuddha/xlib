@@ -83,15 +83,13 @@ impl Window {
     }
 
     pub fn get_wm_role(&self, display: &Display) -> Result<String, XError> {
-        unsafe {
-            let mut class_hint: xlib::XClassHint = uninitialized();
-            let rs = xlib::XGetClassHint(display.0, self.0 as c_ulong, &mut class_hint);
+            let mut class_hint: xlib::XClassHint = unsafe { uninitialized() };
+            let rs = unsafe { xlib::XGetClassHint(display.0, self.0 as c_ulong, &mut class_hint) };
             if rs == 0 || class_hint.res_class.is_null() {
                 Err(XError::BadProperty)
             } else {
-                Ok(CStr::from_ptr(class_hint.res_name).to_string_lossy().into_owned())
+                Ok(unsafe { CStr::from_ptr(class_hint.res_name) }.to_string_lossy().into_owned())
             }
-        }
     }
 
 
@@ -99,6 +97,17 @@ impl Window {
         unsafe {
             xlib::XSelectInput(display.0, self.0, mask);
         }
+    }
+
+    pub fn list_properties(&self, display: &Display) -> Vec<u64> {
+        let mut x = 0;
+        let s = unsafe {
+            xlib::XListProperties(display.0, self.0, &mut x)
+        };
+        let ss = unsafe { from_raw_parts(s as *const u64, x as usize) }.to_owned();
+        unsafe { xlib::XFree(s as *mut ::std::os::raw::c_void) };
+        ss
+
     }
 
     pub fn get_property(&self, display: &Display, atom: u64) -> Option<Vec<u8>> {
@@ -173,6 +182,13 @@ mod tests {
         let scr = d.default_screen();
         let rt = d.root_window(scr);
         assert!(rt.query_tree(&d).len() > 1);
+    }
+    #[test]
+    fn list_properties() {
+        let mut d = Display::default().unwrap();
+        let scr = d.default_screen();
+        let rt = d.root_window(scr);
+        assert!(0 < rt.list_properties(&d).len());
     }
 
 

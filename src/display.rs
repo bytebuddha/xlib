@@ -109,6 +109,22 @@ impl Display {
         }
         Ok(From::from(event))
     }
+
+    pub fn create_window(&self, parent: Window) -> Window {
+        Window(unsafe {
+            xlib::XCreateSimpleWindow(
+                self.0, //display
+                parent.0, //parent window
+                0, // x
+                0, // y
+                0, // width
+                0, // height
+                0, // border width
+                0, // border color
+                0 // background pixel
+            )
+        })
+    }
 }
 
 impl AsRawFd for Display {
@@ -131,10 +147,6 @@ mod tests {
     fn window_props() {
         let d = Display::default().unwrap();
         let win = d.root_window(d.get_screen(0));
-        for window in win.query_tree(&d) {
-            println!("WINDOW: {}\nWM_NAME: {:#?}", window.0, window.get_wm_name(&d));
-            println!("Role: {:#?}", window.get_wm_role(&d));
-        }
     }
     #[test]
     fn current_desktop() {
