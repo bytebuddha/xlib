@@ -24,7 +24,7 @@ pub use x11::xlib::XEvent as RawXEvent;
 mod event;
 pub use event::Event;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum EventType {
     KeyPress = 2,
     ButtonPress = 4,
