@@ -5,7 +5,7 @@ authors = ["patrick greene <shadowcynical@gmail.com>"]
 
 [dependencies]
 libc = "*"
-
+futures = "*"
 [dependencies.x11]
 version = "*"
 features = ["xlib"]

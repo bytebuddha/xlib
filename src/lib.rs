@@ -2,6 +2,7 @@
 
 extern crate x11;
 extern crate libc;
+extern crate futures;
 
 mod display;
 pub use display::Display;

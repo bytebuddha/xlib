@@ -8,6 +8,10 @@ use std::mem::transmute;
 use std::str::from_utf8;
 use std::os::unix::io::{ RawFd, AsRawFd };
 use Event;
+use futures::Stream;
+use futures::Poll;
+use futures::Async;
+
 pub struct Display(pub *mut xlib::Display);
 
 impl Display {
@@ -124,6 +128,18 @@ impl Display {
                 0 // background pixel
             )
         })
+    }
+}
+
+impl Stream for Display {
+    type Item = Event;
+    type Error = ();
+    fn poll(&mut self) -> Poll<Option<Self::Item>, Self::Error> {
+        if self.events_pending() {
+            Ok(Async::Ready(Some(self.get_event().unwrap())))
+        } else {
+            Ok(Async::NotReady)
+        }
     }
 }
 
