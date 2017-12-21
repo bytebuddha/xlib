@@ -174,7 +174,6 @@ impl Window {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use Display;
     #[test]
     fn query_tree() {
