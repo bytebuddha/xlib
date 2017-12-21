@@ -8,7 +8,7 @@ pub struct Event {
 
 impl ::std::fmt::Debug for Event {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> Result<(), ::std::fmt::Error> {
-        write!(f, "{:?}({:?})",self.typ,self.event.pad)
+        write!(f, "{:?}({:?})",self.typ,self.event)
     }
 }
 
